@@ -1,15 +1,15 @@
-pub struct Node {
-    pub val: i32,
-    pub l: Option<Box<Node>>,
-    pub r: Option<Box<Node>>,
+pub struct Node<T> {
+    pub val: T,
+    pub l: Option<Box<Node<T>>>,
+    pub r: Option<Box<Node<T>>>,
 }
 
-impl Node {
-    pub fn root(val: i32) -> Self {
+impl<T: PartialEq + PartialOrd> Node<T> {
+    pub fn root(val: T) -> Self {
         Node { val: val, l: None, r: None }
     }
 
-    pub fn insert(&mut self, x: i32) {
+    pub fn insert(&mut self, x: T) {
         if self.val == x {
             return
         }
@@ -36,7 +36,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_tree_values() {
+    fn test_tree_integers() {
         let mut root = Node::root(2);
         root.insert(1);
         root.insert(2);
@@ -50,5 +50,25 @@ mod tests {
             Some(child) => child.val == 3,
             None => false,
         }); 
+    }
+
+    #[test]
+    fn test_tree_str() {
+        let mut root = Node::root("egg");
+        root.insert("banana");
+        root.insert("chocolate");
+        root.insert("apple");
+        root.insert("lemon");
+
+        assert!(match root.l {
+            Some(child) => child.val == "banana" && match child.l {
+                Some(grandchild) => grandchild.val == "apple",
+                None => false,
+            } && match child.r {
+                Some(grandchild) => grandchild.val == "chocolate",
+                None => false,
+            },
+            None => false,
+        })
     }
 }
