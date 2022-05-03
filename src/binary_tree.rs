@@ -29,6 +29,22 @@ impl<T: PartialEq + PartialOrd> Node<T> {
             }
         }
     }
+
+    pub fn find(&self, x: T) -> Option<T> {
+        if x < self.val {
+            match &self.l {
+                Some(n) => n.find(x),
+                None => None,
+            }
+        } else if x > self.val {
+            match &self.r {
+                Some(n) => n.find(x),
+                None => None,
+            }
+        } else {
+            Some(x)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -70,5 +86,19 @@ mod tests {
             },
             None => false,
         })
+    }
+
+    #[test]
+    fn test_find_str() {
+        let mut tree = Node::root("egg");
+        tree.insert("banana");
+        tree.insert("chocolate");
+        tree.insert("apple");
+        tree.insert("lemon");
+
+        let x = tree.find("apple");
+        assert!(x == Some("apple"));
+        let y = tree.find("orange");
+        assert!(y == None);
     }
 }
