@@ -4,7 +4,7 @@ pub struct Node<T> {
     pub r: Option<Box<Node<T>>>,
 }
 
-impl<T: PartialEq + PartialOrd> Node<T> {
+impl<T: PartialEq + PartialOrd + Copy> Node<T> {
     pub fn root(val: T) -> Self {
         Node { val: val, l: None, r: None }
     }
@@ -45,6 +45,13 @@ impl<T: PartialEq + PartialOrd> Node<T> {
             Some(x)
         }
     }
+
+    pub fn min(&self) -> T {
+        match &(self.l) {
+            Some(n) => n.min(),
+            None => self.val,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -52,7 +59,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_tree_integers() {
+    fn test_tree_int() {
         let mut root = Node::root(2);
         root.insert(1);
         root.insert(2);
@@ -100,5 +107,18 @@ mod tests {
         assert!(x == Some("apple"));
         let y = tree.find("orange");
         assert!(y == None);
+    }
+
+    #[test]
+    fn test_min_int() {
+        let mut tree = Node::root(5);
+        tree.insert(8);
+        tree.insert(3);
+        tree.insert(1);
+        tree.insert(4);
+        tree.insert(2);
+
+        let x = tree.min();
+        assert!(x == 1);
     }
 }
